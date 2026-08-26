@@ -10,7 +10,7 @@ https://django-google-authentication.onrender.com/
 
 **Source Code:**
 
-https://github.com/Deepu-mahapatro/SECUREAUTH-EMAIL-OTP.git
+https://github.com/Deepu-mahapatro/SECUREAUTH-LOGIN-OTP.git
 
 ## 📌 Overview
 
