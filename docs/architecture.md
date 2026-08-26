@@ -1,37 +1,49 @@
-# SecureAuth — System Architecture
-
-## 1. Overview
+SecureAuth — System Architecture
+1. Overview
 
 SecureAuth is a Django-based email OTP authentication system.
 
-It connects the frontend, Django backend, PostgreSQL database, Gmail SMTP, and DNS MX validation to provide a secure email verification workflow.
+It connects the frontend, Django backend, PostgreSQL database, and Resend email API to provide a secure email verification workflow.
 
----
-
-## 2. Architecture
-
-```text
+2. Architecture
 User
+
   ↓
+
 Frontend
+
 HTML / CSS / JavaScript
+
   ↓
+
 Django Backend
+
   ↓
+
 Email Validation
+
   ↓
-Gmail + MX Check
-  ↓
+
 OTP Generation
+
   ↓
-Gmail SMTP
+
+Resend Email API
+
   ↓
+
 User Receives OTP
+
   ↓
+
 OTP Verification
+
   ↓
+
 PostgreSQL
+
   ↓
+
 Email Verified
 3. Main Components
 Frontend
@@ -41,9 +53,10 @@ The frontend provides:
 Email input
 OTP input
 Validation messages
+Send verification code
 Verify OTP
 Resend OTP
-Success page
+Authentication success page
 
 Technologies: HTML, CSS, JavaScript
 
@@ -52,12 +65,14 @@ Django Backend
 The backend handles:
 
 Email validation
-Gmail validation
-DNS MX checking
 OTP generation
 OTP verification
 OTP resend
+OTP expiration
+OTP attempt limitation
 Authentication data
+Session management
+API request processing
 
 Technology: Django
 
@@ -67,77 +82,155 @@ PostgreSQL stores:
 
 User information
 OTP records
-Verification status
+Verification information
 OTP-related data
-Gmail SMTP
+Authentication-related records
+Resend Email API
 
-Gmail SMTP is used to send the generated OTP to the user's email address.
+Resend is used to send the generated OTP to the user's email address.
 
-DNS MX Check
+The Django backend communicates with the Resend API using the configured API key and sender address.
 
-DNS MX records are checked to determine whether the email domain is configured to receive emails.
+Render
+
+Render hosts the production Django application.
+
+The production application connects to PostgreSQL and Resend using environment variables.
 
 4. Authentication Process
-1. User enters Gmail address
+1. User enters email address
+
              ↓
-2. Frontend validates the email
+
+2. Frontend submits the email
+
              ↓
-3. Django validates the email
+
+3. Django receives the request
+
              ↓
-4. Gmail and MX validation
+
+4. Django validates the email
+
              ↓
+
 5. OTP is generated
+
              ↓
-6. OTP is sent through Gmail SMTP
+
+6. OTP is sent through Resend
+
              ↓
-7. User enters the OTP
+
+7. OTP information is stored in PostgreSQL
+
              ↓
-8. Backend verifies the OTP
+
+8. User receives the OTP
+
              ↓
-9. Email is marked as verified
+
+9. User enters the OTP
+
              ↓
-10. Success page is displayed
+
+10. Backend verifies the OTP
+
+             ↓
+
+11. OTP expiration and attempt limits are checked
+
+             ↓
+
+12. Email is marked as verified
+
+             ↓
+
+13. Success page is displayed
 5. Security Flow
 Email Validation
+
        ↓
-Gmail Validation
-       ↓
-DNS MX Check
-       ↓
+
 OTP Generation
+
        ↓
-OTP Hashing
+
+OTP Storage
+
        ↓
+
 OTP Expiration
+
        ↓
+
 Attempt Limit
+
        ↓
+
+Resend Cooldown
+
+       ↓
+
 OTP Verification
 
-These layers help protect the authentication process from invalid requests and repeated OTP guessing.
+       ↓
+
+Authentication Success
+
+These layers help protect the authentication process from invalid email requests, expired verification codes, repeated OTP requests, and repeated OTP guessing attempts.
+
+The OTP is only considered valid when it matches the expected verification information and satisfies the configured expiration and attempt restrictions.
 
 6. Data Flow
 User
- ↓
-Django API
- ↓
-Validation
- ↓
-OTP Service
- ├──→ Gmail SMTP → User Email
- │
- └──→ PostgreSQL → OTP/User Data
 
-The frontend communicates with the Django backend, while the backend manages OTP delivery and database operations.
+  ↓
+
+Frontend
+
+  ↓
+
+Django API
+
+  ↓
+
+Email Validation
+
+  ↓
+
+OTP Service
+
+  ├──→ Resend API → User Email
+  │
+  └──→ PostgreSQL → OTP / User Data
+
+The frontend communicates with the Django backend through API requests.
+
+The Django backend validates the user's email and manages the OTP authentication process.
+
+The backend communicates with the Resend API to deliver the OTP to the user's email.
+
+At the same time, PostgreSQL stores the OTP-related information required for verification.
+
+The OTP verification request is then sent from the frontend back to Django, where the stored OTP information is checked.
 
 7. Result
 
 After successful OTP verification:
 
 OTP Verified
+
      ↓
+
 User Email Verified
+
      ↓
+
+Authentication Successful
+
+     ↓
+
 Success Page
 
-This completes the SecureAuth email verification workflow.
+This completes the SecureAuth email OTP authentication workflow.
