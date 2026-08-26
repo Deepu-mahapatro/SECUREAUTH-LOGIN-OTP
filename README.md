@@ -6,11 +6,11 @@ SecureAuth is a Django-based production-oriented authentication system designed 
 
 **Live Application:**
 
-[Live Demo](https://django-google-authentication.onrender.com/)
+https://django-google-authentication.onrender.com/
 
 **Source Code:**
 
-[GitHub Repository](https://github.com/Deepu-mahapatro/SECUREAUTH-EMAIL-OTP.git)
+https://github.com/Deepu-mahapatro/SECUREAUTH-EMAIL-OTP.git
 
 ## 📌 Overview
 
