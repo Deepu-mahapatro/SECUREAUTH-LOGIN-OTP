@@ -97,6 +97,9 @@ function initEmailForm() {
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
+
+    console.log("EMAIL FORM SUBMIT HANDLER IS RUNNING");
+
     const value = emailInput.value.trim();
 
     if (!value) {
