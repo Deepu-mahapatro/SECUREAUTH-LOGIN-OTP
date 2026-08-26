@@ -1,40 +1,47 @@
-SecureAuth — Testing Documentation
-1. Testing Overview
+# SecureAuth — Testing Documentation
 
-SecureAuth was tested through the web interface, Django API requests, PostgreSQL database connection, and the Resend email service.
+## 1. Testing Overview
 
-The main goal was to verify email validation, OTP generation and delivery, OTP verification, security controls, resend functionality, API endpoints, and database connectivity.
+SecureAuth was tested through the web interface, Django API endpoints, PostgreSQL database connection, Resend email delivery service, and after production deployment.
 
-2. Email Validation Tests
-Test	Expected Result
-Valid email address	Accepted
-Invalid email format	Rejected
-Unsupported/invalid email address	Rejected
-Email domain typo	Rejected
-Empty email	Rejected
+The main goal was to verify the complete email OTP authentication workflow, including email validation, DNS/MX validation, OTP generation and delivery, OTP verification, OTP expiration, resend functionality, attempt limitation, PostgreSQL connectivity, static file handling, production deployment, and environment configuration.
+
+---
+
+## 2. Email Validation Tests
+
+| Test                          | Expected Result                  |
+| ----------------------------- | -------------------------------- |
+| Open authentication page      | Page loads successfully          |
+| Valid email address            | Email accepted                   |
+| Invalid email format           | Email rejected                   |
+| Invalid Gmail address          | Email rejected                   |
+| Email domain typo              | Email rejected                   |
+| Empty email                    | Request rejected                 |
+| DNS/MX validation              | Domain validation completed      |
 
 Example:
 
-user@gmail.com       → Accepted
+```text
+Open Authentication Page    → Page Loaded
 
-user@               → Rejected
+Enter Valid Gmail           → Email Accepted
 
-usergmail.com       → Rejected
+Invalid Email Format        → Request Rejected
 
-user@gamil.com      → Rejected
+Invalid Domain              → Request Rejected
 
-(empty email)       → Rejected
-
-The email validation is performed before the OTP generation process begins.
-
+DNS / MX Check              → Domain Validated
 3. OTP Tests
 Test	Expected Result
+OTP generation	Six-digit OTP generated
 Correct OTP	Verification successful
 Incorrect OTP	Error message displayed
 Expired OTP	OTP rejected
 Empty OTP	Request rejected
 Invalid OTP format	Request rejected
 Too many attempts	Further attempts blocked
+OTP delivery	OTP received by user
 
 The OTP verification process checks the submitted code against the OTP information stored by the backend.
 
@@ -45,13 +52,14 @@ Test	Expected Result
 Resend during cooldown	Request blocked
 Resend after cooldown	New OTP sent
 Invalid email	Request rejected
-Resend request processed successfully	New verification code generated
+Verification session missing	Request rejected
+Valid resend request	New verification code generated
 
 The resend functionality uses the configured OTP resend cooldown to prevent users from repeatedly requesting verification codes within a short period.
 
 5. API Tests
 
-The following endpoints were tested through the Django application and browser/API requests:
+The following SecureAuth API endpoints were tested during development:
 
 GET  /api/health/
 
@@ -62,65 +70,135 @@ POST /api/otp/send/
 POST /api/otp/verify/
 
 POST /api/otp/resend/
-Health Check
-GET /api/health/
+
+The health check endpoint was tested to verify that the Django backend was running.
+
+The database test endpoint was tested to verify PostgreSQL connectivity.
+
+The send OTP endpoint was tested to verify email validation, OTP generation, and email delivery.
+
+The verify OTP endpoint was tested to verify OTP validation, expiration handling, and attempt limitation.
+
+The resend OTP endpoint was tested to verify resend cooldown and new OTP generation.
+
+6. OTP Authentication Success Test
+
+The successful email OTP authentication flow was tested from the initial email submission through OTP delivery and verification.
 
 Expected result:
 
-{
-    "status": "ok",
-    "message": "Backend is running"
-}
-Database Test
+Email Submission
+
+        ↓
+
+Email Validation
+
+        ↓
+
+DNS / MX Validation
+
+        ↓
+
+OTP Generation
+
+        ↓
+
+OTP Delivery
+
+        ↓
+
+User Enters OTP
+
+        ↓
+
+Django OTP Verification
+
+        ↓
+
+Email Verified
+
+        ↓
+
+Authentication Success
+
+The user was successfully redirected to the authentication success page after entering a valid OTP.
+
+7. Security Tests
+
+The following security features were tested:
+
+✓ Email format validation
+
+✓ Backend email validation
+
+✓ Gmail domain validation
+
+✓ DNS / MX record validation
+
+✓ Six-digit OTP generation
+
+✓ OTP expiration
+
+✓ OTP attempt limitation
+
+✓ OTP resend cooldown
+
+✓ Secure OTP processing
+
+✓ PostgreSQL OTP storage
+
+✓ Backend request validation
+
+✓ Authentication error handling
+
+✓ Environment variable protection
+
+✓ .env exclusion from Git
+
+✓ Resend API key protection
+
+✓ Django secret key protection
+
+✓ Database credential protection
+
+Sensitive Resend API credentials, database credentials, and Django configuration values were kept outside the source code using environment variables.
+
+The .env file is excluded from Git to prevent sensitive configuration from being exposed.
+
+8. Database Tests
+
+The production application uses PostgreSQL.
+
+The following database functionality was verified:
+
+✓ PostgreSQL database connection
+
+✓ Django database configuration
+
+✓ Database migrations
+
+✓ User data storage
+
+✓ OTP data storage
+
+✓ Verification status storage
+
+✓ Authentication-related database operations
+
+The production PostgreSQL database is configured through the Render production environment.
+
+The database connection was also verified through:
+
 GET /api/auth/test/
 
 Expected result:
 
-{
-    "status": "ok",
-    "database": "connected"
-}
-Send OTP
-POST /api/otp/send/
-
-Expected result:
-
-{
-    "message": "Verification code generated successfully."
-}
-Verify OTP
-POST /api/otp/verify/
-
-Expected result:
-
-{
-    "message": "Email verified successfully."
-}
-Resend OTP
-POST /api/otp/resend/
-
-Expected result:
-
-{
-    "message": "Verification code resent successfully."
-}
-6. Database Test
-
-The PostgreSQL connection was tested using the database test endpoint.
-
-Expected result:
-
 Database: connected
-
-The database testing confirms that Django can communicate with the configured PostgreSQL database.
-
-The project was tested with PostgreSQL during local development and with the production PostgreSQL database configured through Render.
-
-7. Email Delivery Tests
+9. Email Delivery Tests
 
 The Resend email integration was tested to verify that generated OTPs could be delivered to the user's email address.
 
-The following operations were tested:
+The following functionality was verified:
 
 ✓ Resend API key configuration
 
@@ -134,82 +212,127 @@ The following operations were tested:
 
 ✓ OTP verification after email delivery
 
-The production application was also tested with the Resend API after deployment on Render.
+✓ OTP resend
 
-8. Security Tests
+The production application was also tested with the Resend email service after deployment on Render.
 
-The following security features were tested:
+10. Static File Tests
 
-✓ Email validation
+Static files were tested after production deployment.
 
-✓ Backend email validation
+The following functionality was verified:
 
-✓ Six-digit OTP generation
+✓ CSS files load correctly
 
-✓ OTP expiration
+✓ JavaScript files load correctly
 
-✓ OTP attempt limit
+✓ Static files collected successfully
 
-✓ OTP resend cooldown
+✓ WhiteNoise static file serving
 
-✓ OTP verification
+✓ Static files accessible from production
 
-✓ Secure OTP processing
+Static files are collected during deployment using Django's collectstatic command and served through WhiteNoise.
 
-✓ PostgreSQL OTP storage
+11. Production Deployment Tests
 
-✓ Environment variable protection
+The deployed application was tested on the Render production environment.
 
-✓ Resend API key protection
+Production URL:
 
-✓ Django secret key protection
+https://secureauth-login-otp.onrender.com/
 
-✓ Database credential protection
+The following production functionality was verified:
 
-The security controls help prevent invalid requests, expired OTP usage, repeated OTP guessing, and excessive OTP resend requests.
+✓ Application loads successfully
 
-9. Final Testing Status
+✓ Production HTTPS connection
+
+✓ Authentication page loads
+
+✓ Static files load correctly
+
+✓ Email validation works
+
+✓ DNS / MX validation works
+
+✓ OTP generation works
+
+✓ OTP email delivery works
+
+✓ OTP verification works
+
+✓ OTP expiration works
+
+✓ OTP attempt limitation works
+
+✓ OTP resend works
+
+✓ Resend cooldown works
+
+✓ PostgreSQL connection works
+
+✓ Authentication success page loads
+
+✓ API endpoints respond correctly
+
+✓ Authentication error handling works
+
+Production API Base URL:
+
+https://secureauth-login-otp.onrender.com
+12. Final Testing Status
 
 The main SecureAuth authentication workflow was tested successfully.
 
+✓ Authentication page
+
 ✓ Email validation
+
+✓ Gmail validation
+
+✓ DNS / MX validation
 
 ✓ OTP generation
 
-✓ OTP delivery
+✓ OTP email delivery
 
 ✓ OTP verification
 
 ✓ OTP expiration
 
-✓ OTP attempt limit
+✓ OTP attempt limitation
 
 ✓ OTP resend
 
-✓ Resend email API
+✓ Resend cooldown
 
-✓ PostgreSQL connection
+✓ PostgreSQL database connection
 
 ✓ API endpoints
 
 ✓ Authentication success
 
-✓ Authentication error handling
-
-✓ Local development environment
+✓ Static file loading
 
 ✓ Production deployment
 
 ✓ Render production environment
 
-✓ Static file serving
+✓ Resend email integration
 
-10. Testing Tools
+✓ Authentication error handling
+
+✓ Environment variable configuration
+
+The complete authentication flow was successfully tested from email submission through validation, OTP generation, email delivery, OTP verification, email verification, authentication success, and production deployment.
+
+13. Testing Tools
 Web Browser
 
 Used to test the complete SecureAuth user interface and authentication workflow.
 
-Postman / API Requests
+Postman
 
 Used to test the Django API endpoints independently from the frontend.
 
@@ -226,10 +349,18 @@ Resend
 
 Used to test OTP email delivery during local development and production.
 
+DNS / MX Resolver
+
+Used to validate whether the email domain is configured to receive email.
+
 Render
 
 Used to test the deployed production application and its connection with PostgreSQL and Resend.
 
-The production application was tested at:
+Gunicorn
 
-https://secureauth-login-otp.onrender.com
+Used as the production WSGI server for the Django application.
+
+WhiteNoise
+
+Used to serve Django static files in the production environment.
