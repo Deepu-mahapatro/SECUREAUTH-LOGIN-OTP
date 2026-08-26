@@ -7,12 +7,6 @@ logger = logging.getLogger(__name__)
 
 
 def send_verification_email(email: str, otp: str, expiry_minutes: int) -> bool:
-    """
-    Sends the OTP using the Resend email API.
-
-    Returns True on success and False on failure.
-    Never logs the OTP or API key.
-    """
 
     subject = "Your SecureAuth verification code"
 
@@ -26,12 +20,16 @@ def send_verification_email(email: str, otp: str, expiry_minutes: int) -> bool:
         "Regards,\n"
         "SecureAuth"
     )
-    
+
     api_key = os.getenv("RESEND_API_KEY")
     from_email = os.getenv("EMAIL_FROM")
-    logger.info("EMAIL_FROM exists: %s", bool(from_email))
-    logger.info("RESEND_API_KEY exists: %s", bool(api_key))
-    logger.info("EMAIL_FROM value: %s", from_email)
+
+    # TEMPORARY DEBUG
+    print("========== EMAIL CONFIG CHECK ==========", flush=True)
+    print("EMAIL_FROM EXISTS:", bool(from_email), flush=True)
+    print("EMAIL_FROM VALUE:", from_email, flush=True)
+    print("RESEND_API_KEY EXISTS:", bool(api_key), flush=True)
+    print("=========================================", flush=True)
 
     if not api_key:
         logger.error("RESEND_API_KEY is not configured.")
@@ -44,14 +42,12 @@ def send_verification_email(email: str, otp: str, expiry_minutes: int) -> bool:
     try:
         resend.api_key = api_key
 
-        resend.Emails.send(
-            {
-                "from": from_email,
-                "to": [email],
-                "subject": subject,
-                "text": message,
-            }
-        )
+        resend.Emails.send({
+            "from": from_email,
+            "to": [email],
+            "subject": subject,
+            "text": message,
+        })
 
         return True
 
