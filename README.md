@@ -1,95 +1,72 @@
-SecureAuth — Email OTP Authentication System
+# SecureAuth — Production-Level Authentication & Email Verification System
 
-SecureAuth is a Django-based authentication system that allows users to securely authenticate using their email address and a one-time password (OTP).
+SecureAuth is a Django-based production-oriented authentication system designed to provide secure user registration, email verification, OTP-based authentication, Google OAuth 2.0 login, session management, and protected user access.
 
-The project implements a complete email authentication workflow, including email submission, secure OTP generation, OTP delivery through the Resend email API, OTP expiration, attempt limitation, resend cooldown, database storage, OTP verification, and successful authentication.
+## 🌐 Live Demo
 
-Built for educational and portfolio purposes.
+**Live Application:**
 
-🌐 Live Demo
+[Live Demo](https://django-google-authentication.onrender.com/)
 
-Live Application:
+**Source Code:**
 
-https://secureauth-login-otp.onrender.com
+[GitHub Repository](https://github.com/Deepu-mahapatro/SECUREAUTH-EMAIL-OTP.git)
 
-Source Code:
+## 📌 Overview
 
-SecureAuth GitHub Repository
+SecureAuth provides a complete authentication system instead of relying on a single login mechanism.
 
-📌 Overview
+Users can register using an email address, receive a one-time verification password through email, verify the account, and continue through the authenticated workflow.
 
-SecureAuth provides a simple and secure email-based authentication workflow.
+The application also supports Google OAuth 2.0 authentication.
 
-Users start the authentication process by entering their email address into the application. Django validates the email address and generates a secure six-digit OTP.
+## ✨ Features
 
-The generated OTP is sent to the user's email through the Resend email API.
+- Secure user registration
+- Email-based account verification
+- One-Time Password (OTP) authentication
+- OTP expiration handling
+- OTP resend workflow
+- Email format validation
+- DNS-based domain verification
+- MX record validation
+- Google OAuth 2.0 authentication
+- Google Sign-In integration
+- OAuth authorization flow
+- OAuth callback handling
+- OAuth state validation
+- Django session-based authentication
+- Secure logout
+- PostgreSQL database support
+- Environment variable configuration
+- `.env` credential protection
+- Server-side validation
+- Authentication error handling
 
-The OTP is stored in the PostgreSQL database together with its expiration and validation information.
+## 🔐 Authentication Flow
 
-The user then enters the received OTP. Django validates the OTP, checks its expiration and attempt limits, and completes the authentication process when the submitted code is correct.
-
-The project uses Django, PostgreSQL, Resend, JavaScript, environment-based configuration, and secure OTP validation mechanisms.
-
-✨ Features
-Email-based authentication
-Six-digit OTP generation
-OTP email delivery using Resend
-OTP verification
-OTP expiration
-Maximum OTP attempt limitation
-OTP resend cooldown
-PostgreSQL database
-Django backend
-Responsive authentication interface
-JavaScript-based form handling
-Backend API endpoints
-Email validation
-Authentication success handling
-Authentication error handling
-Environment variable configuration
-Secure credential management
-.env credential protection
-Production deployment using Render
-Gunicorn production server
-WhiteNoise static file serving
-Local PostgreSQL development support
-Production PostgreSQL support
-Session-based authentication
-Secure OTP processing
-🔐 Authentication Flow
+```text
 User
      ↓
-Open SecureAuth Authentication Page
+Open Authentication Page
      ↓
-Enter Email Address
+Register / Login
      ↓
-Submit Email
+Email Validation
      ↓
-Django OTP API
+DNS / MX Domain Validation
      ↓
-Validate Email
+Generate OTP
      ↓
-Generate 6-Digit OTP
+Send OTP through Email
      ↓
-Check OTP Rules
+User Enters OTP
      ↓
-Send OTP Through Resend
+Verify OTP
      ↓
-Store OTP in PostgreSQL
+Create Django Session
      ↓
-User Receives Email
-     ↓
-Enter OTP
-     ↓
-Django OTP Verification API
-     ↓
-Validate OTP
-     ↓
-Check Expiration
-     ↓
-Check Attempt Limit
-     ↓
-Authentication Success
+Authenticated User
 Email OTP Flow
 Browser
     │
@@ -97,61 +74,43 @@ Browser
 Django Application
     │
     ▼
-/api/otp/send/
+Registration / Login Request
     │
     ▼
 Email Validation
     │
     ▼
-Generate OTP
+DNS Resolver
     │
     ▼
-Resend Email API
+MX Record Verification
     │
     ▼
-User Email Inbox
+OTP Generation
+    │
+    ▼
+Email Delivery
     │
     ▼
 User Enters OTP
-    │
-    ▼
-/api/otp/verify/
     │
     ▼
 OTP Validation
     │
     ▼
 Authentication Success
-
-The authentication process starts when the user enters an email address.
-
-Django receives the request through the OTP send endpoint and validates the submitted email address.
-
-A six-digit OTP is generated and sent to the user's email using Resend.
-
-The OTP information is stored in PostgreSQL.
-
-The user enters the received verification code.
-
-Django checks whether the OTP is correct, whether it has expired, and whether the maximum number of attempts has been exceeded.
-
-If validation succeeds, the user is authenticated successfully.
-
 🛠️ Technology Stack
 Technology	Purpose
 Python	Programming Language
-Django 6.1	Backend Web Framework
-HTML5	Frontend
-CSS3	Styling
-JavaScript	Frontend Logic
-PostgreSQL	Database
-Resend	OTP Email Delivery
+Django	Backend Web Framework
+PostgreSQL	Production Database
+Google OAuth 2.0	Third-Party Authentication
+SMTP / Email Service	OTP Delivery
+dnspython	DNS / MX Record Validation
 python-dotenv	Environment Configuration
-dj-database-url	Database URL Configuration
-WhiteNoise	Static File Serving
-Gunicorn	Production WSGI Server
+Django Sessions	Session Management
+Postman	API Testing
 Git & GitHub	Version Control
-Render	Production Deployment
 📂 Project Structure
 SECUREAUTH-EMAIL-OTP/
 │
@@ -161,116 +120,89 @@ SECUREAUTH-EMAIL-OTP/
 └── backend/
     ├── manage.py
     ├── requirements.txt
-    ├── .env
+    ├── .env.example
     │
     ├── config/
-    │   ├── __init__.py
     │   ├── settings.py
     │   ├── urls.py
     │   ├── asgi.py
     │   └── wsgi.py
     │
     ├── authentication/
-    │   ├── __init__.py
     │   ├── models.py
     │   ├── views.py
-    │   ├── utils.py
-    │   ├── email_service.py
     │   ├── urls.py
     │   └── ...
     │
     ├── templates/
-    │   └── ...
-    │
-    ├── static/
-    │   ├── css/
-    │   │   └── style.css
-    │   └── js/
-    │       └── script.js
-    │
-    └── staticfiles/
-
-The project is organized into a Django backend, authentication application, templates, static files, and configuration files.
-
-The authentication application contains the OTP generation, verification, database operations, and email delivery logic.
-
-The .env file is used for local sensitive configuration and must not be uploaded to GitHub.
-
+    └── static/
 🔗 API Endpoints
-Send OTP
-POST /api/otp/send/
+User Registration
+POST /auth/register/
 
-Starts the email authentication process.
+Begins the email verification workflow.
 
-The endpoint:
+OTP Verification
+POST /auth/verify-otp/
 
-Receives the user's email address.
-Validates the email.
-Checks OTP restrictions.
-Generates a six-digit OTP.
-Sends the OTP using Resend.
-Stores the OTP information in PostgreSQL.
-Verify OTP
-POST /api/otp/verify/
+Validates the submitted one-time password.
 
-Verifies the OTP submitted by the user.
+Resend OTP
+POST /auth/resend-otp/
 
-The endpoint validates:
+Generates and sends a new verification OTP.
 
-Submitted email.
-OTP value.
-OTP expiration.
-Maximum verification attempts.
-OTP validity.
+Google Login
+GET /auth/google/login/
 
-If the OTP is correct and valid, authentication is completed.
+Starts the Google OAuth 2.0 authentication process.
 
-Authentication Page
-GET /
+Google OAuth Callback
+GET /auth/google/callback/
 
-Displays the SecureAuth authentication interface where the user enters their email address.
+Processes and validates the Google OAuth response.
+
+Logout
+GET /auth/logout/
+
+Terminates the authenticated Django session.
 
 🛡️ Security Features
-Six-digit OTP authentication
+Server-side authentication validation
+Email format validation
+DNS-based email domain validation
+MX record verification
+One-Time Password authentication
 OTP expiration
-Maximum OTP attempt limitation
-OTP resend cooldown
-Server-side OTP validation
-PostgreSQL-backed OTP storage
-Resend API email delivery
-Environment-based credential management
+OTP resend validation
+Secure OAuth state validation
+Google OAuth 2.0 authentication
+Django session-based authentication
+Session termination during logout
+Environment-based secret management
 .env excluded from Git
-API key protection
-Database credential protection
-Backend authentication processing
-Email validation
-Authentication error handling
-Secure session management
-Production HTTPS through Render
-No sensitive credentials hardcoded in source code
+No authentication secrets hardcoded in source code
+PostgreSQL configuration
+HTTPS-ready deployment
 
-The project uses environment variables for sensitive configuration.
+Sensitive credentials should never be stored directly inside source code.
 
-Example:
-
-RESEND_API_KEY=your-resend-api-key
-EMAIL_FROM=onboarding@resend.dev
 SECRET_KEY=your-secret-key
+DEBUG=False
+
 DATABASE_URL=your-production-database-url
 
-For local PostgreSQL development:
+GOOGLE_CLIENT_ID=your-google-client-id
+GOOGLE_CLIENT_SECRET=your-google-client-secret
 
-DB_NAME=your-database-name
-DB_USER=your-database-user
-DB_PASSWORD=your-database-password
-DB_HOST=localhost
-DB_PORT=5432
-
-The actual .env file must never be uploaded to GitHub.
-
+EMAIL_HOST=your-smtp-host
+EMAIL_PORT=587
+EMAIL_HOST_USER=your-email
+EMAIL_HOST_PASSWORD=your-email-password
+EMAIL_USE_TLS=True
 ⚙️ Installation
 1. Clone the Repository
-git clone https://github.com/Deepu-mahapatro/SECUREAUTH-EMAIL-OTP.git
+git clone <your-repository-url>
 2. Open the Backend
 cd SECUREAUTH-EMAIL-OTP/backend
 3. Create Virtual Environment
@@ -286,49 +218,25 @@ pip install -r requirements.txt
 
 Create a .env file inside the backend directory.
 
-For local development:
-
+SECRET_KEY=your-secret-key
 DEBUG=True
 
-DB_NAME=email_auth_db
-DB_USER=postgres
-DB_PASSWORD=your-postgresql-password
-DB_HOST=localhost
-DB_PORT=5432
+DATABASE_URL=your-database-url
 
-OTP_EXPIRY_MINUTES=5
-OTP_MAX_ATTEMPTS=5
-OTP_RESEND_COOLDOWN_SECONDS=60
+GOOGLE_CLIENT_ID=your-google-client-id
+GOOGLE_CLIENT_SECRET=your-google-client-secret
 
-RESEND_API_KEY=your-resend-api-key
-EMAIL_FROM=onboarding@resend.dev
+EMAIL_HOST=your-smtp-host
+EMAIL_PORT=587
+EMAIL_HOST_USER=your-email
+EMAIL_HOST_PASSWORD=your-email-password
+EMAIL_USE_TLS=True
 
-SECRET_KEY=your-development-secret-key
-
-For production, Render provides the PostgreSQL DATABASE_URL.
-
-Production environment variables include:
-
-DEBUG=False
-SECRET_KEY=your-production-secret-key
-DATABASE_URL=your-render-postgresql-url
-RESEND_API_KEY=your-resend-api-key
-EMAIL_FROM=onboarding@resend.dev
-
-Sensitive credentials must never be committed to GitHub.
+Never upload your actual .env file or authentication credentials to GitHub.
 
 🗄️ Database Setup
 
-The project uses PostgreSQL as its database.
-
-Local Development
-
-The local application connects to PostgreSQL using:
-
-HOST=localhost
-PORT=5432
-
-After configuring PostgreSQL and the environment variables, run:
+The project uses PostgreSQL as the production database.
 
 python manage.py makemigrations
 
@@ -336,15 +244,7 @@ Then:
 
 python manage.py migrate
 
-Django creates the required database tables used by the authentication system, OTP records, sessions, and other application components.
-
-Production
-
-The deployed application uses PostgreSQL through the Render-provided:
-
-DATABASE_URL
-
-The Django settings support both local PostgreSQL configuration and production PostgreSQL configuration.
+Django creates the required database tables used by the authentication system.
 
 ▶️ Run the Project
 
@@ -356,108 +256,102 @@ Open:
 
 http://127.0.0.1:8000/
 
-The SecureAuth authentication page will be displayed.
+The authentication page will be displayed.
 
-Enter an email address and submit the form.
+🚀 Production Deployment
 
-The application sends the OTP through Resend.
+Before deployment, configure:
 
-The user then enters the received OTP to complete authentication.
+DEBUG=False
+Production SECRET_KEY
+Production DATABASE_URL
+Email service credentials
+Google OAuth credentials
+Production OAuth redirect URI
+Allowed hosts
+HTTPS configuration
+Secure session configuration
+Secure CSRF configuration
 
+Example:
+
+Local Development
+       ↓
+Environment Configuration
+       ↓
+PostgreSQL Configuration
+       ↓
+Production Settings
+       ↓
+Database Migrations
+       ↓
+Cloud Deployment
+       ↓
+HTTPS Application
 🧪 Testing
-
-The SecureAuth authentication workflow was tested using the browser, Django development server, PostgreSQL database, Resend email API, and production deployment environment.
 
 Tested cases include:
 
 Application startup
-Authentication page
-Email input
+Registration workflow
 Email validation
+DNS resolution
+MX record validation
 OTP generation
-OTP email delivery
-Resend API integration
-PostgreSQL connection
-OTP database storage
 OTP verification
-Correct OTP handling
-Incorrect OTP handling
+Invalid OTP handling
 Expired OTP handling
-Maximum OTP attempt handling
-OTP resend cooldown
-Authentication success
+OTP resend workflow
+Google OAuth redirect
+OAuth state validation
+OAuth callback
+Successful authentication
+Django session creation
+User logout
+PostgreSQL connection
+Environment configuration
 Authentication error handling
-Environment variable configuration
-Production database configuration
-Production email configuration
-Render deployment
-Static file serving
-Browser-based testing
-Browser Authentication Test
-
-The main authentication workflow was tested using:
-
-http://127.0.0.1:8000/
-
-Production testing was performed using:
-
-https://secureauth-login-otp.onrender.com
-
-OTP request:
-
-POST /api/otp/send/
-
-OTP verification:
-
-POST /api/otp/verify/
-
-The complete authentication flow was tested from email submission through OTP delivery and OTP verification.
-
 🚀 Future Improvements
 Password-based authentication
 Password reset
 Multi-factor authentication
 JWT authentication
+Refresh token handling
 Role-based access control
 User profile management
-Additional authentication providers
-Google OAuth authentication
+Account lockout protection
+Login attempt throttling
+API rate limiting
+CAPTCHA integration
+Authentication activity logging
+Automated authentication tests
+CI/CD security checks
+Swagger/OpenAPI documentation
+Production monitoring
+Additional OAuth providers
 GitHub OAuth authentication
 Microsoft OAuth authentication
-Automated authentication tests
-API documentation using Swagger/OpenAPI
-Advanced rate limiting
-Authentication activity tracking
-Email delivery monitoring
-Authentication audit logs
-Advanced account security controls
-Custom verified email domain
-Production monitoring and alerting
 🎓 Educational & Portfolio Purpose
 
 This project demonstrates practical experience with:
 
 Django backend development
-Email-based authentication
-OTP generation
-OTP verification
-Transactional email API integration
-Resend API
-PostgreSQL database management
-Database-backed authentication
-API endpoint development
+Secure authentication architecture
+Email OTP verification
+DNS and MX record verification
+Google OAuth 2.0
+OAuth authorization flow
+OAuth state validation
+Django authentication framework
 Session management
+PostgreSQL database integration
 Environment-based configuration
 Secure credential management
-Backend development
-Frontend JavaScript integration
 Authentication testing
 Production deployment
-Render deployment
-Static file management
 Git and GitHub
 
-The project is designed to demonstrate practical understanding of modern email authentication workflows, OTP security, database integration, and secure Django application deployment.
+The project demonstrates practical understanding of secure authentication workflows, email verification, OAuth integration, database-backed authentication, and production-oriented Django application development.
 
 📄 License
 
