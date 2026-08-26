@@ -26,12 +26,12 @@ def send_verification_email(email: str, otp: str, expiry_minutes: int) -> bool:
         "Regards,\n"
         "SecureAuth"
     )
-
+    
     api_key = os.getenv("RESEND_API_KEY")
     from_email = os.getenv("EMAIL_FROM")
-
     logger.info("EMAIL_FROM exists: %s", bool(from_email))
     logger.info("RESEND_API_KEY exists: %s", bool(api_key))
+    logger.info("EMAIL_FROM value: %s", from_email)
 
     if not api_key:
         logger.error("RESEND_API_KEY is not configured.")
